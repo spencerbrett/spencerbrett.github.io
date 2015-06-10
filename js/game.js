@@ -197,21 +197,12 @@ function Grid() {
 		return true;
 	}
 
-	function score(cells) {
+	function score(cells, depth) {
 		// X is human player
-		if (checkWin(cells, 'x')) return -1;
+		if (checkWin(cells, 'x')) return -(10 - depth);
 		// O is computer
-		else if (checkWin(cells, 'o')) return 1;
+		else if (checkWin(cells, 'o')) return (10 - depth);
 		else return 0;
-	}
-
-	// Recursive minimax function for choosing optimal move.
-	function minimax(cells, symbol) {
-		// Base case
-		if (checkOver(cells)) return score(cells);
-
-		var scores = [];
-		var moves = [];
 	}
 })(Grid);
 
