@@ -115,6 +115,7 @@ Grid.prototype.checkWinner = function(symbol) {
 	return null;
 };
 
+// Check if either side won
 Grid.prototype.gameOver = function() {
 	var cells = this.cells;
 	var size = this.size;
@@ -123,10 +124,9 @@ Grid.prototype.gameOver = function() {
 	// Check columns
 	for (var x = 0; x < size; x++) {
 		contender = cells[x][0];
-		if (!contender) break;
 		for (var y = 0; y < size; y++) {
 			// cut column check if opposite symbol
-			if (cells[x][y] !== contender) break;
+			if (!contender || cells[x][y] !== contender) break;
 			// reached end of column without short circuit means full column of symbol
 			if (y == max) return true;
 		}
@@ -134,29 +134,24 @@ Grid.prototype.gameOver = function() {
 	// Check rows
 	for (var y = 0; y < size; y++) {
 		contender = cells[0][y];
-		if (!contender) break;
 		for (var x = 0; x < size; x++) {
 			// cut column check if opposite symbol
-			if (cells[x][y] !== contender) break;
+			if (!contender || cells[x][y] !== contender) break;
 			// reached end of column without short circuit means full column of symbol
 			if (x == max) return true;
 		}
 	}
 	contender = cells[0][0];
 	// Check top-left to bottom-right diagonal
-	if (contender) {
-		for (var i = 0; i < size; i++) {
-			if (cells[i][i] !== contender) break;
-			if (i == max) return true;
-		}
+	for (var i = 0; i < size; i++) {
+		if (!contender || cells[i][i] !== contender) break;
+		if (i == max) return true;
 	}
 	contender = cells[max][0];
 	// Check bottom-left to top-right diagonal
-	if (contender) {
-		for (var i = 0; i < size; i++) {
-			if (cells[(max)-i][i] !== contender) break;
-			if (i == max) return true;
-		}
+	for (var i = 0; i < size; i++) {
+		if (!contender || cells[(max)-i][i] !== contender) break;
+		if (i == max) return true;
 	}
 	// Check draw. Because there was no victory. Full game board means draw.
 	if (!this.cellsAvailable()){
