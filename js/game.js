@@ -66,45 +66,6 @@ function drawO(cellX, cellY) {
 	ctx.closePath();
 }
 
-function checkWin(grid, symbol) {
-	var cells = grid.cells;
-	var size = grid.size;
-	var max = size-1;
-	// Check columns
-	for (var x = 0; x < size; x++) {
-		for (var y = 0; y < size; y++) {
-			// cut column check if opposite symbol
-			if (cells[x][y] !== symbol) break;
-			// reached end of column without short circuit means full column of symbol
-			if (y == max) return symbol;
-		}
-	}
-	// Check rows
-	for (var y = 0; y < size; y++) {
-		for (var x = 0; x < size; x++) {
-			// cut column check if opposite symbol
-			if (cells[x][y] !== symbol) break;
-			// reached end of column without short circuit means full column of symbol
-			if (x == max) return symbol;
-		}
-	}
-	// Check top-left to bottom-right diagonal
-	for (var i = 0; i < size; i++) {
-		if (cells[i][i] !== symbol) break;
-		if (i == max) return symbol;
-	}
-	// Check bottom-left to top-right diagonal
-	for (var i = 0; i < size; i++) {
-		if (cells[(max)-i][i] !== symbol) break;
-		if (i == max) return symbol;
-	}
-	// Check draw. Because there was no victory. Full game board means draw.
-	if (!grid.cellsAvailable()){
-		return 'draw';
-	}
-	return null;
-}
-
 // 3x3 game grid
 gameGrid = new Grid(3);
 playerTurn = 0; // player 1 starts
@@ -123,15 +84,19 @@ $('#canvas').click(function(e){
 	if (gameGrid.cellAvailable(pos)) {
 		if (playerTurn === 0) {
 			gameGrid.markCell(pos, 'x');
-			winState = checkWin(gameGrid, 'x');
+			winState = gameGrid.checkWinner('x');
 			drawGame(gameGrid);
 			playerTurn = 1;
-		} else {
-			gameGrid.markCell(pos, 'o');
-			winState = checkWin(gameGrid, 'o');
+		}
+		// Computer Player
+		if (!gameGrid.gameOver()){
+			var move = getBestMove(gameGrid, 'o')
+			gameGrid.markCell(move, 'o');
+			winState = gameGrid.checkWinner('o');
 			drawGame(gameGrid);
 			playerTurn = 0;
 		}
+
 		if (!!winState) {
 			var msg = $('#game-msg');
 			$('#canvas').off('click');

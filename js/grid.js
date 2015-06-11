@@ -75,6 +75,96 @@ Grid.prototype.markCell = function(pos, symbol) {
 	this.cells[pos.x][pos.y] = symbol;
 };
 
+
+Grid.prototype.checkWinner = function(symbol) {
+	var cells = this.cells;
+	var size = this.size;
+	var max = size-1;
+	// Check columns
+	for (var x = 0; x < size; x++) {
+		for (var y = 0; y < size; y++) {
+			// cut column check if opposite symbol
+			if (cells[x][y] !== symbol) break;
+			// reached end of column without short circuit means full column of symbol
+			if (y == max) return symbol;
+		}
+	}
+	// Check rows
+	for (var y = 0; y < size; y++) {
+		for (var x = 0; x < size; x++) {
+			// cut column check if opposite symbol
+			if (cells[x][y] !== symbol) break;
+			// reached end of column without short circuit means full column of symbol
+			if (x == max) return symbol;
+		}
+	}
+	// Check top-left to bottom-right diagonal
+	for (var i = 0; i < size; i++) {
+		if (cells[i][i] !== symbol) break;
+		if (i == max) return symbol;
+	}
+	// Check bottom-left to top-right diagonal
+	for (var i = 0; i < size; i++) {
+		if (cells[(max)-i][i] !== symbol) break;
+		if (i == max) return symbol;
+	}
+	// Check draw. Because there was no victory. Full game board means draw.
+	if (!this.cellsAvailable()){
+		return 'draw';
+	}
+	return null;
+};
+
+Grid.prototype.gameOver = function() {
+	var cells = this.cells;
+	var size = this.size;
+	var max = size-1;
+	var contender;
+	// Check columns
+	for (var x = 0; x < size; x++) {
+		contender = cells[x][0];
+		if (!contender) break;
+		for (var y = 0; y < size; y++) {
+			// cut column check if opposite symbol
+			if (cells[x][y] !== contender) break;
+			// reached end of column without short circuit means full column of symbol
+			if (y == max) return true;
+		}
+	}
+	// Check rows
+	for (var y = 0; y < size; y++) {
+		contender = cells[0][y];
+		if (!contender) break;
+		for (var x = 0; x < size; x++) {
+			// cut column check if opposite symbol
+			if (cells[x][y] !== contender) break;
+			// reached end of column without short circuit means full column of symbol
+			if (x == max) return true;
+		}
+	}
+	contender = cells[0][0];
+	// Check top-left to bottom-right diagonal
+	if (contender) {
+		for (var i = 0; i < size; i++) {
+			if (cells[i][i] !== contender) break;
+			if (i == max) return true;
+		}
+	}
+	contender = cells[max][0];
+	// Check bottom-left to top-right diagonal
+	if (contender) {
+		for (var i = 0; i < size; i++) {
+			if (cells[(max)-i][i] !== contender) break;
+			if (i == max) return true;
+		}
+	}
+	// Check draw. Because there was no victory. Full game board means draw.
+	if (!this.cellsAvailable()){
+		return true;
+	}
+	return false;
+};
+
 /**
 * Function for serializing the grid state.
 * May be redundant with copy constructor.
