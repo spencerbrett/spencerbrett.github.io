@@ -1,7 +1,7 @@
 function getBestMove(grid, player) {
 	var moves = grid.availableCells();
 	var bestMove = moves ? moves[0] : null;
-	var bestScore = Number.MIN_VALUE;
+	var bestScore = Number.NEGATIVE_INFINITY;
 	for (var i = 0; i < moves.length; i++) {
 		var newState = new Grid(grid.size, grid.cells);
 		newState.markCell(moves[i], player);
@@ -51,7 +51,7 @@ function minimax(grid, depth, maxPlayer, player) {
 	var moves = grid.availableCells();
 	// Choose best score for maximizing player
 	if (maxPlayer === player) {
-		var bestVal = Number.MIN_VALUE;
+		var bestVal = Number.NEGATIVE_INFINITY;
 		for (var i = 0; i < moves.length; i++) {
 			// In order to maintain state without side-effects while recursing through
 			// possible games, we need a deep copy of the game state. This is done 
@@ -68,7 +68,7 @@ function minimax(grid, depth, maxPlayer, player) {
 	} 
 	// Choose worst score for opponent
 	else {
-		var bestVal = Number.MAX_VALUE;
+		var bestVal = Number.POSITIVE_INFINITY;
 		for (var i = 0; i < moves.length; i++) {
 			var newState = new Grid(grid.size, grid.cells);
 			newState.markCell(moves[i], player);
